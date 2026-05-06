@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kirat Interior — Handeep Singh</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet"/>
+ 
+  <!-- ============================================================
+       ✏️  EASY EDIT ZONE — Change all your details here ONLY
+       ============================================================ -->
+  <script>
+    const SITE = {
+      name:         "Handeep Singh",
+      brand:        "Kirat Interior",
+      tagline:      "Custom Furniture  ·  Quality Work  ·  Professional Handling",
+      location:     "Bathinda, Punjab",
+      about:        "I am Handeep Singh, an interior designer and master craftsman based in Bathinda, Punjab. With years of hands-on experience, I deliver interiors that blend quality craftsmanship with contemporary design — every detail executed with precision and care. From custom wardrobes and modular kitchens to complete bedroom fit-outs, every project is treated as a work of art.",
+      whatsapp:     "919872593096",        // ✏️ Updated number
+      instagram:    "kiratinterior",       // ✏️ Instagram handle
+ 
+      // ✏️ Edit or add services
+      services: [
+        { title: "Modular Kitchens",    desc: "Custom kitchen design and full installation, tailored to your space." },
+        { title: "Custom Wardrobes",    desc: "Bespoke sliding and hinged wardrobes built to your dimensions." },
+        { title: "Bedroom Interiors",   desc: "Complete bedroom fit-outs — beds, panels, lighting, flooring." },
+        { title: "Wall Panelling",      desc: "Decorative wooden and PVC wall panels adding depth to any room." },
+        { title: "Display Units",       desc: "Custom TV units, display shelves, and pooja cabinets." },
+        { title: "Full Interior Design",desc: "End-to-end interior solutions for homes and commercial spaces." },
+      ],
+ 
+      // ✏️ Edit projects. To add a real photo: image: "your-photo.jpg" (put photo in same folder)
+      projects: [
+        { title: "Luxury Wardrobe Unit",    tag: "Custom Furniture",  location: "Bathinda, Punjab",  image: "", icon: "🪵" },
+        { title: "Premium Bedroom Setup",   tag: "Bedroom Interior",  location: "Bathinda, Punjab",  image: "", icon: "🛏️" },
+        { title: "Display Cabinet",         tag: "Woodwork",          location: "Punjab",            image: "", icon: "🚪" },
+        { title: "Modern Living Room",      tag: "Full Interior",     location: "Punjab",            image: "", icon: "🏠" },
+        { title: "Modular Kitchen",         tag: "Kitchen",           location: "Punjab",            image: "", icon: "🍳" },
+        { title: "Commercial Fit-Out",      tag: "Commercial",        location: "Punjab",            image: "", icon: "🪑" },
+      ],
+ 
+      // ✏️ Stats shown on About section
+      stats: [
+        { num: "10+",  label: "Years Experience" },
+        { num: "200+", label: "Projects Completed" },
+        { num: "100%", label: "Quality Assured" },
+        { num: "PAN",  label: "Punjab Coverage" },
+      ],
+    };
+  </script>
+  <!-- ============================================================ -->
+ 
+  <style>
+    :root {
+      --black:  #090806;
+      --dark:   #100f0c;
+      --card:   #141210;
+      --gold:   #b8862e;
+      --glt:    #d09e42;
+      --cream:  #ede3d1;
+      --warm:   #b8a990;
+      --muted:  #5e5244;
+      --border: rgba(184,134,46,0.14);
+      --line:   rgba(184,134,46,0.08);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black);
+      color: var(--warm);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: 
+        radial-gradient(circle at 5% 5%, rgba(184,134,46,0.08) 0%, transparent 50%),
+        radial-gradient(circle at 95% 95%, rgba(150,40,40,0.1) 0%, transparent 55%),
+        radial-gradient(circle at 50% 50%, rgba(40,60,160,0.05) 0%, transparent 60%);
+      pointer-events: none; z-index: -1;
+    }
+    /* grain */
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9000; opacity: 0.35;
+    }
+ 
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      padding: 30px 6vw;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: all 0.5s;
+    }
+    nav.scrolled {
+      background: rgba(9,8,6,0.96);
+      backdrop-filter: blur(14px);
+      padding: 18px 6vw;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; font-weight: 400;
+      color: var(--cream); letter-spacing: 0.05em;
+      text-decoration: none;
+    }
+    .nav-logo em { font-style: italic; color: var(--glt); }
+    .nav-links { display: flex; gap: 44px; list-style: none; }
+    .nav-links a {
+      font-size: 0.68rem; letter-spacing: 0.24em;
+      text-transform: uppercase; color: var(--muted);
+      text-decoration: none; transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--glt); }
+ 
+    .hamburger {
+      display: none;
+      background: none; border: none; cursor: pointer;
+      flex-direction: column; gap: 5px; z-index: 501;
+    }
+    .hamburger span {
+      display: block; width: 24px; height: 1px;
+      background: var(--cream); transition: all 0.3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+ 
+    /* TOP GROUP (Hero + About) */
+    .top-group { position: relative; }
+    .sticky-bg-container {
+      position: absolute; inset: 0; z-index: 0;
+    }
+    .sticky-bg {
+      position: sticky; top: 0; width: 100%; height: 100dvh; overflow: hidden;
+      background: var(--black);
+      background-image: 
+        radial-gradient(circle at 0% 0%, rgba(184,134,46,0.08) 0%, transparent 40%),
+        radial-gradient(circle at 100% 100%, rgba(180,40,40,0.1) 0%, transparent 40%);
+    }
+    #bg-image {
+      position: absolute; top: 0; right: 0; left: auto;
+      height: 100%; width: auto; max-width: 100%;
+      object-fit: cover;
+      object-position: right top;
+      z-index: 1;
+      mask-image: linear-gradient(to right, transparent 0%, black 50%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 50%);
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, var(--black) 0%, var(--black) 20%, rgba(50, 5, 5, 0.4) 40%, transparent 100%);
+      z-index: 2;
+      pointer-events: none;
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(var(--line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--line) 1px, transparent 1px);
+      background-size: 90px 90px;
+      z-index: 2; opacity: 0.3;
+      mask-image: linear-gradient(to right, black 0%, black 35%, transparent 80%);
+      -webkit-mask-image: linear-gradient(to right, black 0%, black 35%, transparent 80%);
+    }
+
+    /* HERO */
+    #hero {
+      min-height: 100dvh;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 0 6vw 12dvh;
+      position: relative;
+    }
+    .hero-content { position: relative; z-index: 10; }
+    .hero-eyebrow {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 0.65rem; letter-spacing: 0.28em;
+      text-transform: uppercase; color: var(--gold);
+      margin-top: 15px; margin-bottom: 0;
+    }
+    .hero-eyebrow::before { content: ''; display: block; width: 32px; height: 1px; background: var(--gold); }
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(4.5rem, 10vw, 10rem);
+      font-weight: 300; line-height: 0.88;
+      color: var(--cream); letter-spacing: -0.01em;
+    }
+    h1 em { font-style: italic; color: var(--glt); display: block; }
+    .hero-tagline {
+      font-size: 0.78rem; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--muted);
+      margin: 24px 0 48px;
+    }
+    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+ 
+    /* BUTTONS */
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 13px 32px;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.66rem; font-weight: 400;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      text-decoration: none; cursor: pointer; border: none;
+      transition: all 0.3s;
+    }
+    .btn-gold  { background: var(--gold); color: var(--black); }
+    .btn-gold:hover { background: var(--glt); transform: translateY(-2px); }
+    .btn-ghost { border: 1px solid var(--border); color: var(--warm); background: none; }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+ 
+    /* SECTIONS */
+    section { padding: 120px 6vw; }
+    .sec-label {
+      font-size: 0.6rem; letter-spacing: 0.4em;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 18px;
+    }
+    h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 5.5vw, 5rem);
+      font-weight: 300; line-height: 1.0;
+      color: var(--cream);
+    }
+    h2 em { font-style: italic; color: var(--glt); }
+    .hr { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); }
+ 
+    /* ABOUT */
+    #about {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      gap: 100px; align-items: start;
+      position: relative; z-index: 10;
+    }
+    .about-left { position: sticky; top: 120px; }
+    .about-stats {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1px; background: var(--line); margin-top: 60px;
+    }
+    .stat { background: var(--black); padding: 24px 20px; }
+    .stat .n {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem; font-weight: 300;
+      color: var(--glt); line-height: 1; margin-bottom: 5px;
+    }
+    .stat .d { font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+    .about-right p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.18rem; font-weight: 300;
+      line-height: 1.9; color: var(--warm); margin-bottom: 28px;
+    }
+ 
+    /* SERVICES */
+    #services { background: rgba(16, 15, 12, 0.4); backdrop-filter: blur(5px); }
+    .svc-list { margin-top: 70px; }
+    .svc-row {
+      display: grid;
+      grid-template-columns: 40px 1fr 1fr;
+      align-items: center; gap: 28px;
+      padding: 26px 0;
+      border-top: 1px solid var(--line);
+      transition: background 0.3s; cursor: default;
+    }
+    .svc-row:last-child { border-bottom: 1px solid var(--line); }
+    .svc-row:hover .svc-title { color: var(--glt); }
+    .svc-num { font-family: 'Cormorant Garamond', serif; font-size: 0.9rem; color: var(--muted); }
+    .svc-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.55rem; font-weight: 300;
+      color: var(--cream); transition: color 0.3s;
+    }
+    .svc-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.6; max-width: 320px; }
+ 
+    /* CATALOG */
+    .catalog-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 56px; flex-wrap: wrap; gap: 20px; }
+    .grid6 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+    .proj-card {
+      position: relative; aspect-ratio: 4/5;
+      overflow: hidden; background: var(--card); cursor: pointer;
+      border: 1px solid transparent;
+      border-image: linear-gradient(135deg, var(--border), transparent, var(--border)) 1;
+      transition: transform 0.4s ease;
+    }
+    .proj-card::after {
+      content: ''; position: absolute; inset: 0;
+      box-shadow: inset 0 0 40px rgba(0,0,0,0.6);
+      pointer-events: none; z-index: 2;
+    }
+    .proj-card:first-child { grid-row: span 2; aspect-ratio: auto; }
+    .proj-bg {
+      width: 100%; height: 100%;
+      transition: transform 0.7s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .proj-card:nth-child(1) .proj-bg { background: linear-gradient(150deg,#1e1608,#120e05); }
+    .proj-card:nth-child(2) .proj-bg { background: linear-gradient(150deg,#101510,#0b0f0c); }
+    .proj-card:nth-child(3) .proj-bg { background: linear-gradient(150deg,#17100e,#0f0908); }
+    .proj-card:nth-child(4) .proj-bg { background: linear-gradient(150deg,#161018,#0f0b12); }
+    .proj-card:nth-child(5) .proj-bg { background: linear-gradient(150deg,#181610,#100f0a); }
+    .proj-card:nth-child(6) .proj-bg { background: linear-gradient(150deg,#1a1308,#110c06); }
+    .proj-card:hover .proj-bg { transform: scale(1.06); }
+    .proj-icon { font-size: 3.5rem; opacity: 0.07; }
+    .proj-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.7s ease; }
+    .proj-card:hover .proj-img { transform: scale(1.06); }
+    .proj-info {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(9,8,6,0.92) 0%, transparent 70%);
+      padding: 16px; display: flex; flex-direction: column; justify-content: flex-end;
+      z-index: 5;
+    }
+    .proj-tag { font-size: 0.56rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold); margin-bottom: 5px; }
+    .proj-name { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; color: var(--cream); margin-bottom: 3px; }
+    .proj-loc { font-size: 0.7rem; color: var(--muted); }
+ 
+    /* QUOTE */
+    .quote-strip {
+      padding: 80px 6vw; text-align: center;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+    .quote-strip blockquote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 400; font-style: italic;
+      max-width: 800px;
+      margin: 0 auto 24px; line-height: 1.4;
+      color: #ede3d1;
+    }
+    .quote-strip cite { font-size: 0.62rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--warm); opacity: 0.8; }
+ 
+    /* CONTACT */
+    #contact { display: block; max-width: 800px; margin: 0 auto; }
+    .contact-head { margin-bottom: 60px; text-align: center; }
+    .contact-desc {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.08rem; font-weight: 300; line-height: 1.85;
+      color: var(--muted); margin: 22px auto 48px;
+      max-width: 600px;
+    }
+    .foot-socials { display: flex; gap: 20px; align-items: center; }
+    .foot-soc-item {
+      color: var(--muted);
+      transition: all 0.3s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .foot-soc-item svg { width: 20px; height: 20px; stroke-width: 1.5; }
+    .foot-soc-item:hover { color: var(--gold); transform: translateY(-2px); }
+ 
+    /* FORM */
+    .form { display: flex; flex-direction: column; gap: 14px; }
+    .fld { display: flex; flex-direction: column; gap: 7px; }
+    .flbl { font-size: 0.58rem; letter-spacing: 0.26em; text-transform: uppercase; color: var(--muted); }
+    .finp, .ftxt {
+      background: var(--dark); border: 1px solid var(--border);
+      color: var(--cream); padding: 12px 15px;
+      font-family: 'Jost', sans-serif; font-size: 0.88rem;
+      font-weight: 300; outline: none;
+      transition: border-color 0.3s; -webkit-appearance: none; appearance: none;
+    }
+    .finp:focus, .ftxt:focus { border-color: var(--gold); }
+    .ftxt { min-height: 110px; resize: vertical; }
+    .frow { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+ 
+    /* FOOTER */
+    footer {
+      padding: 40px 6vw;
+      border-top: 1px solid var(--line);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 14px;
+    }
+    .foot-brand { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; color: var(--cream); }
+    .foot-brand em { font-style: italic; color: var(--glt); }
+    .foot-note { font-size: 0.62rem; letter-spacing: 0.1em; color: var(--muted); }
+ 
+    /* ANIM */
+    .ap { opacity: 0; transform: translateY(22px); transition: opacity 0.9s ease, transform 0.9s ease; }
+    .ap.in { opacity: 1; transform: translateY(0); }
+ 
+    /* RESPONSIVE REFINEMENTS */
+    @media (max-width: 1024px) {
+      h1 { font-size: clamp(3.5rem, 8vw, 6rem); }
+      #about { gap: 60px; }
+    }
+
+    @media (max-width: 860px) {
+      #bg-image { 
+        width: 100%; 
+        object-position: 80% center; /* Shift subject more to the right to make room */
+        mask-image: linear-gradient(to bottom, black 80%, transparent 100%), linear-gradient(to right, transparent 0%, black 30%);
+        -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%), linear-gradient(to right, transparent 0%, black 30%);
+        mask-composite: intersect;
+        -webkit-mask-composite: source-in;
+      }
+      .hero-bg {
+        background: radial-gradient(circle at 80% 30%, rgba(50, 5, 5, 0.3) 0%, transparent 60%),
+                    linear-gradient(to right, var(--black) 0%, rgba(9,8,6,0.6) 15%, transparent 60%);
+      }
+      .hero-grid { mask-image: none; -webkit-mask-image: none; opacity: 0.15; }
+      #about, #contact { grid-template-columns: 1fr; gap: 60px; }
+      .about-left { position: static; }
+      .grid6 { grid-template-columns: 1fr 1fr; gap: 4px; }
+      .proj-card { aspect-ratio: 1/1; }
+      .proj-name { font-size: 0.9rem; }
+      .proj-tag { font-size: 0.45rem; }
+      #about, #contact { grid-template-columns: 1fr; gap: 60px; }
+    }
+
+    @media (max-width: 560px) {
+      .hamburger { display: flex; }
+      .nav-links {
+        position: fixed; top: 0; right: -100%; height: 100dvh;
+        width: 85vw; background: rgba(9,8,6,0.99);
+        backdrop-filter: blur(24px);
+        flex-direction: column; align-items: flex-start; justify-content: center;
+        padding: 0 12vw;
+        gap: 32px; transition: right 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        border-left: 1px solid var(--border);
+      }
+      .nav-links.active { right: 0; }
+      .nav-links a { font-size: 1.2rem; letter-spacing: 0.15em; color: var(--cream); }
+      
+      h1 { font-size: 4.2rem; line-height: 0.9; }
+      .hero-eyebrow { font-size: 0.52rem; letter-spacing: 0.18em; margin-top: 12px; }
+      .hero-eyebrow::before { width: 24px; }
+      .hero-tagline { font-size: 0.7rem; margin: 20px 0 36px; }
+      .hero-btns { flex-direction: column; width: 100%; }
+      .btn { width: 100%; justify-content: center; padding: 16px; }
+      
+      .grid6 { grid-template-columns: 1fr; }
+      .frow { grid-template-columns: 1fr; }
+      
+      section { padding: 80px 6vw; }
+      .about-stats { margin-top: 40px; }
+      .stat { padding: 20px; }
+      .stat .n { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+ 
+<nav id="nav">
+  <a href="#" class="nav-logo">Kirat<em>Interior</em></a>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#catalog">Work</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+ 
+<!-- TOP GROUP (Hero + About) -->
+<div class="top-group">
+  <div class="sticky-bg-container">
+    <div class="sticky-bg">
+      <img id="bg-image" src="handeepsingh.png" alt="Handeep Singh" />
+      <div class="hero-bg"></div>
+      <div class="hero-grid"></div>
+    </div>
+  </div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-content ap">
+    <h1>Kirat<em>Interior</em></h1>
+    <div class="hero-eyebrow" id="h-eye">Interior Designer · Bathinda, Punjab</div>
+    <p class="hero-tagline" id="h-tag">Custom Furniture · Quality Work · Professional Handling</p>
+    <div class="hero-btns">
+      <a href="#catalog" class="btn btn-gold">View Our Work</a>
+      <a href="#contact" class="btn btn-ghost">Get In Touch</a>
+    </div>
+  </div>
+</section>
+ 
+<div class="hr"></div>
+ 
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-left ap">
+    <div class="sec-label">About</div>
+    <h2 id="h2-name">Handeep<br><em>Singh</em></h2>
+    <div class="about-stats" id="about-stats"></div>
+  </div>
+  <div class="about-right ap">
+    <p id="about-txt">Loading…</p>
+    <a href="#contact" class="btn btn-ghost" style="margin-top:12px">Let's Talk →</a>
+  </div>
+</section>
+
+</div> <!-- End top-group -->
+ 
+<div class="hr"></div>
+ 
+<!-- SERVICES -->
+<section id="services">
+  <div class="ap">
+    <div class="sec-label">What We Do</div>
+    <h2>Our <em>Services</em></h2>
+  </div>
+  <div class="svc-list ap" id="svc-list"></div>
+</section>
+ 
+<!-- CATALOG -->
+<section id="catalog">
+  <div class="catalog-head ap">
+    <div>
+      <div class="sec-label">Portfolio</div>
+      <h2>Previous <em>Work</em></h2>
+    </div>
+    <a href="#contact" class="btn btn-ghost">Start a Project</a>
+  </div>
+  <div class="grid6 ap" id="proj-grid"></div>
+</section>
+ 
+<!-- QUOTE -->
+<div class="quote-strip ap">
+  <blockquote>"Quality is not an act — it is a habit. And at Kirat Interior, it is our promise."</blockquote>
+  <cite>— Handeep Singh · Kirat Interior, Bathinda</cite>
+</div>
+ 
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-head ap">
+    <div class="sec-label">Get In Touch</div>
+    <h2>Let's Build<br><em>Together</em></h2>
+    <p class="contact-desc" id="c-desc">Based in Bathinda, Punjab. Serving clients across Punjab and North India. Reach out — let's discuss your project.</p>
+  </div>
+  <div class="ap">
+    <div class="form">
+      <div class="frow">
+        <div class="fld"><label class="flbl">Your Name</label><input class="finp" id="f1" placeholder="Gurpreet Singh"/></div>
+        <div class="fld"><label class="flbl">Phone</label><input class="finp" id="f2" type="tel" placeholder="+91 98765 43210"/></div>
+      </div>
+      <div class="fld"><label class="flbl">Project Type</label><input class="finp" id="f3" placeholder="Bedroom, Kitchen, Wardrobe…"/></div>
+      <div class="fld"><label class="flbl">Your City</label><input class="finp" id="f4" placeholder="Bathinda, Punjab"/></div>
+      <div class="fld"><label class="flbl">Details</label><textarea class="ftxt" id="f5" placeholder="Describe your project, room size, budget…"></textarea></div>
+      <button class="btn btn-gold" id="wa-btn" style="align-self:center; margin-top: 10px;">Send via WhatsApp →</button>
+    </div>
+  </div>
+</section>
+ 
+<!-- FOOTER -->
+<footer>
+  <div class="foot-brand">Kirat <em>Interior</em></div>
+  <div class="foot-socials" id="foot-socials"></div>
+  <div class="foot-note" id="foot-note">© 2025 Kirat Interior · Handeep Singh</div>
+</footer>
+ 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // fill hero
+  document.getElementById('h-eye').textContent = `Interior Designer · ${SITE.location}`;
+  document.getElementById('h-tag').textContent = SITE.tagline;
+ 
+  // fill about
+  const [first, ...rest] = SITE.name.split(' ');
+  document.getElementById('h2-name').innerHTML = `${first}<br><em>${rest.join(' ')}</em>`;
+  document.getElementById('about-txt').textContent = SITE.about;
+  const statsEl = document.getElementById('about-stats');
+  SITE.stats.forEach(s => {
+    statsEl.innerHTML += `<div class="stat"><div class="n">${s.num}</div><div class="d">${s.label}</div></div>`;
+  });
+ 
+  // services
+  const sl = document.getElementById('svc-list');
+  SITE.services.forEach((s, i) => {
+    sl.innerHTML += `<div class="svc-row">
+      <div class="svc-num">0${i+1}</div>
+      <div class="svc-title">${s.title}</div>
+      <div class="svc-desc">${s.desc}</div>
+    </div>`;
+  });
+ 
+  // projects
+  const pg = document.getElementById('proj-grid');
+  SITE.projects.forEach(p => {
+    const media = p.image
+      ? `<img class="proj-img" src="${p.image}" alt="${p.title}" loading="lazy"/>`
+      : `<div class="proj-bg"><span class="proj-icon">${p.icon}</span></div>`;
+    pg.innerHTML += `<div class="proj-card">
+      ${media}
+      <div class="proj-info">
+        <div class="proj-tag">${p.tag}</div>
+        <div class="proj-name">${p.title}</div>
+        <div class="proj-loc">📍 ${p.location}</div>
+      </div>
+    </div>`;
+  });
+ 
+  // socials
+  const socEl = document.getElementById('foot-socials');
+  [
+    {cls:'wa', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>', href:`https://wa.me/${SITE.whatsapp}`},
+    {cls:'ig', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>', href:`https://instagram.com/${SITE.instagram}`},
+  ].forEach(s => {
+    socEl.innerHTML += `<a class="foot-soc-item ${s.cls}" href="${s.href}" target="_blank" rel="noopener" aria-label="${s.cls}">${s.icon}</a>`;
+  });
+ 
+  // footer
+  document.getElementById('foot-note').textContent = `© 2025 ${SITE.brand} · ${SITE.name}`;
+ 
+  // WhatsApp form
+  document.getElementById('wa-btn').addEventListener('click', () => {
+    const name = document.getElementById('f1').value.trim() || 'a customer';
+    const phone = document.getElementById('f2').value.trim();
+    const proj = document.getElementById('f3').value.trim() || 'Interior work';
+    const city = document.getElementById('f4').value.trim() || 'Punjab';
+    const msg = document.getElementById('f5').value.trim();
+    const text = `I am ${name} from ${city}. Project: ${proj}. ${msg ? `Details: ${msg}. ` : ''}Seen your website - Kirat Interior.`;
+    window.open(`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(text)}`, '_blank');
+  });
+});
+ 
+// nav scroll
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// mobile menu
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.getElementById('nav-links');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  navLinks.classList.toggle('active');
+});
+navLinks.addEventListener('click', (e) => {
+  if (e.target.tagName === 'A') {
+    hamburger.classList.remove('open');
+    navLinks.classList.remove('active');
+  }
+});
+ 
+// appear on scroll
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.ap').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
+ 
