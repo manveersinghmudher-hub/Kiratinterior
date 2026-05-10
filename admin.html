@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — Kirat Interior</title>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090806;
+      --card: #141210;
+      --gold: #b8862e;
+      --cream: #dcd0b9;
+      --text: #a6967d;
+      --border: rgba(184,134,46,0.2);
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Jost', sans-serif;
+      margin: 0; padding: 0;
+    }
+    #auth-container, #admin-container {
+      max-width: 1000px; margin: 50px auto; padding: 20px;
+    }
+    #admin-container { display: none; }
+    
+    h1, h2 { color: var(--cream); font-weight: 300; }
+    
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 30px; margin-bottom: 30px;
+    }
+    
+    input, textarea, select {
+      width: 100%; padding: 12px; margin: 10px 0 20px;
+      background: #1a1814; border: 1px solid var(--border);
+      color: var(--cream); font-family: inherit;
+    }
+    
+    button {
+      background: var(--gold); color: #000;
+      border: none; padding: 12px 25px; cursor: pointer;
+      font-weight: 500; transition: 0.3s;
+    }
+    button:hover { background: #d09e42; }
+    button.secondary { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    
+    .tabs { display: flex; gap: 20px; margin-bottom: 30px; }
+    .tab { cursor: pointer; padding: 10px 20px; border-bottom: 2px solid transparent; }
+    .tab.active { border-color: var(--gold); color: var(--gold); }
+    
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    
+    /* Portfolio Styles */
+    .folder-item, .image-item {
+      border: 1px solid rgba(184, 134, 46, 0.3) !important;
+      margin-bottom: 10px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 15px;
+    }
+    .folder-item:hover, .image-item:hover {
+      border-color: var(--gold) !important;
+    }
+    .item-info { display: flex; align-items: center; gap: 15px; }
+    .icon { font-size: 1.5rem; }
+    .delete-btn { color: #ff4444; background: none; padding: 5px; border: 1px solid #ff4444; }
+    .delete-btn:hover { background: #ff4444; color: #fff; }
+    
+    .breadcrumb { margin-bottom: 20px; font-size: 0.9rem; }
+    .breadcrumb span { cursor: pointer; color: var(--gold); }
+    
+    .image-preview { width: 50px; height: 50px; object-fit: cover; }
+    
+    #loading {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center;
+      z-index: 10001;
+    }
+    
+    /* TOAST */
+    #toast-container {
+      position: fixed; top: 20px; right: 20px;
+      display: flex; flex-direction: column; gap: 10px;
+      z-index: 10002;
+    }
+    .toast {
+      background: var(--card); color: var(--cream);
+      border: 1px solid var(--gold); padding: 12px 25px;
+      font-size: 0.85rem; letter-spacing: 0.05em;
+      animation: toastIn 0.4s ease forwards;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    }
+    @keyframes toastIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    .toast.fade-out {
+      animation: toastOut 0.4s ease forwards;
+    }
+    @keyframes toastOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="loading">Updating...</div>
+<div id="toast-container"></div>
+
+<div id="auth-container">
+  <h1>Kirat Interior Admin</h1>
+  <div class="card" id="login-form">
+    <h2>Login</h2>
+    <input type="text" id="login-user" placeholder="Username">
+    <input type="password" id="login-pass" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <p style="margin-top:20px">Don't have an account? <a href="#" onclick="toggleAuth(false)" style="color:var(--gold)">Sign Up</a></p>
+  </div>
+  
+  <div class="card" id="signup-form" style="display:none">
+    <h2>Sign Up</h2>
+    <input type="text" id="signup-user" placeholder="Username">
+    <input type="password" id="signup-pass" placeholder="Password">
+    <button onclick="signup()">Sign Up</button>
+    <p style="margin-top:20px">Already have an account? <a href="#" onclick="toggleAuth(true)" style="color:var(--gold)">Login</a></p>
+  </div>
+</div>
+
+<div id="admin-container">
+  <div style="display:flex; justify-content:space-between; align-items:center">
+    <h1>Dashboard</h1>
+    <button class="secondary" onclick="logout()">Logout</button>
+  </div>
+  
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('content')">Site Content</div>
+    <div class="tab" onclick="showTab('portfolio')">Portfolio</div>
+  </div>
+  
+  <!-- Site Content Tab -->
+  <div id="tab-content">
+    <div class="card">
+      <h2>General Information</h2>
+      <div class="grid-2">
+        <div>
+          <label>Brand Name</label>
+          <input type="text" id="site-brand">
+        </div>
+        <div>
+          <label>Owner Name</label>
+          <input type="text" id="site-name">
+        </div>
+      </div>
+      <label>Tagline</label>
+      <input type="text" id="site-tagline">
+      <label>Location</label>
+      <input type="text" id="site-location">
+      <label>About Description</label>
+      <textarea id="site-about" rows="5"></textarea>
+      <div class="grid-2">
+        <div>
+          <label>WhatsApp Number</label>
+          <input type="text" id="site-whatsapp">
+        </div>
+        <div>
+          <label>Instagram Handle</label>
+          <input type="text" id="site-instagram">
+        </div>
+      </div>
+      <button onclick="updateContent()">Save General Info</button>
+    </div>
+    
+    <div class="card">
+      <h2>Services</h2>
+      <div id="services-list"></div>
+      <button onclick="addService()">+ Add Service</button>
+      <button onclick="updateContent()" style="margin-left:10px">Save Services</button>
+    </div>
+    
+    <div class="card">
+      <h2>Stats</h2>
+      <div id="stats-list"></div>
+      <button onclick="addStat()">+ Add Stat</button>
+      <button onclick="updateContent()" style="margin-left:10px">Save Stats</button>
+    </div>
+  </div>
+  
+  <!-- Portfolio Tab -->
+  <div id="tab-portfolio" style="display:none">
+    <div class="card">
+      <h2>Portfolio Management</h2>
+      <div class="breadcrumb" id="portfolio-breadcrumb">
+        <span onclick="navigateToFolder(null)">Root</span>
+      </div>
+      
+      <div id="portfolio-back-container" style="margin-bottom:15px; display:none;">
+        <button class="secondary" onclick="goBack()" style="padding: 5px 15px; font-size: 0.8rem;">← Back</button>
+      </div>
+      
+      <div class="grid-2">
+        <div>
+          <h3>Create Folder</h3>
+          <input type="text" id="new-folder-name" placeholder="Folder Name">
+          <button onclick="createFolder()">Create</button>
+        </div>
+        <div id="image-upload-section" style="display:none;">
+          <h3>Upload Image</h3>
+          <input type="text" id="img-name" placeholder="Image Name (optional)">
+          <input type="file" id="img-file" accept="image/*">
+          <button onclick="uploadImage()">Upload Image</button>
+        </div>
+      </div>
+      
+      <hr style="border:0; border-top:1px solid var(--border); margin:30px 0">
+      
+      <div id="portfolio-items">
+        <!-- Folders and Images will appear here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let isAuthenticated = localStorage.getItem('isAdmin') === 'true';
+  let currentFolderId = null;
+  let allFolders = [];
+  let siteData = {};
+
+  const API_URL = '/api';
+
+  window.onload = async () => {
+    if (isAuthenticated) {
+      showAdmin();
+      await loadData();
+    }
+  };
+
+  function toggleAuth(isLogin) {
+    document.getElementById('login-form').style.display = isLogin ? 'block' : 'none';
+    document.getElementById('signup-form').style.display = isLogin ? 'none' : 'block';
+  }
+
+  // NOTIFICATIONS
+  function notify(msg) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = msg;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.classList.add('fade-out');
+      setTimeout(() => toast.remove(), 400);
+    }, 3000);
+  }
+
+  async function signup() {
+    const username = document.getElementById('signup-user').value;
+    const password = document.getElementById('signup-pass').value;
+    const res = await fetch(`${API_URL}/auth/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    if (res.ok) {
+      notify('Sign up successful! Please login.');
+      toggleAuth(true);
+    } else {
+      alert(await res.text());
+    }
+  }
+
+  async function login() {
+    const username = document.getElementById('login-user').value;
+    const password = document.getElementById('login-pass').value;
+    const res = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    if (res.ok) {
+      const data = await res.json();
+      isAuthenticated = true;
+      localStorage.setItem('isAdmin', 'true');
+      showAdmin();
+      await loadData();
+    } else {
+      notify(await res.text());
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem('isAdmin');
+    location.reload();
+  }
+
+  function showAdmin() {
+    document.getElementById('auth-container').style.display = 'none';
+    document.getElementById('admin-container').style.display = 'block';
+  }
+
+  function showTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('tab-content').style.display = tab === 'content' ? 'block' : 'none';
+    document.getElementById('tab-portfolio').style.display = tab === 'portfolio' ? 'block' : 'none';
+  }
+
+  async function loadData() {
+    const contentRes = await fetch(`${API_URL}/content`);
+    siteData = await contentRes.json();
+    fillContentForm();
+    
+    const foldersRes = await fetch(`${API_URL}/folders`);
+    allFolders = await foldersRes.json();
+    renderPortfolio();
+  }
+
+  function fillContentForm() {
+    document.getElementById('site-brand').value = siteData.brand || '';
+    document.getElementById('site-name').value = siteData.name || '';
+    document.getElementById('site-tagline').value = siteData.tagline || '';
+    document.getElementById('site-location').value = siteData.location || '';
+    document.getElementById('site-about').value = siteData.about || '';
+    document.getElementById('site-whatsapp').value = siteData.whatsapp || '';
+    document.getElementById('site-instagram').value = siteData.instagram || '';
+    
+    const svcList = document.getElementById('services-list');
+    svcList.innerHTML = '';
+    (siteData.services || []).forEach((s, i) => {
+      svcList.innerHTML += `
+        <div class="grid-2" style="margin-bottom:10px">
+          <input type="text" value="${s.title}" placeholder="Service Title" onchange="siteData.services[${i}].title = this.value">
+          <input type="text" value="${s.desc}" placeholder="Service Description" onchange="siteData.services[${i}].desc = this.value">
+        </div>`;
+    });
+    
+    const statList = document.getElementById('stats-list');
+    statList.innerHTML = '';
+    (siteData.stats || []).forEach((s, i) => {
+      statList.innerHTML += `
+        <div class="grid-2" style="margin-bottom:10px">
+          <input type="text" value="${s.num}" placeholder="Value (e.g. 10+)" onchange="siteData.stats[${i}].num = this.value">
+          <input type="text" value="${s.label}" placeholder="Label" onchange="siteData.stats[${i}].label = this.value">
+        </div>`;
+    });
+  }
+
+  function addService() {
+    if(!siteData.services) siteData.services = [];
+    siteData.services.push({ title: '', desc: '' });
+    fillContentForm();
+  }
+
+  function addStat() {
+    if(!siteData.stats) siteData.stats = [];
+    siteData.stats.push({ num: '', label: '' });
+    fillContentForm();
+  }
+
+  async function updateContent() {
+    const brand = document.getElementById('site-brand').value;
+    const name = document.getElementById('site-name').value;
+    const tagline = document.getElementById('site-tagline').value;
+    const location = document.getElementById('site-location').value;
+    const about = document.getElementById('site-about').value;
+    const whatsapp = document.getElementById('site-whatsapp').value;
+    const instagram = document.getElementById('site-instagram').value;
+    
+    const body = { 
+      brand, name, tagline, location, about, whatsapp, instagram,
+      services: siteData.services,
+      stats: siteData.stats
+    };
+
+    const res = await fetch(`${API_URL}/content`, {
+      method: 'PUT',
+      headers: { 
+        'Content-Type': 'application/json',
+        'X-Admin-Auth': 'authenticated'
+      },
+      body: JSON.stringify(body)
+    });
+    
+    if(res.ok) alert('Content updated!');
+    else alert('Error updating content');
+  }
+
+  // Portfolio Logic
+  function navigateToFolder(id) {
+    currentFolderId = id;
+    renderPortfolio();
+  }
+
+  function goBack() {
+    if (!currentFolderId) return;
+    const current = allFolders.find(f => f._id === currentFolderId);
+    navigateToFolder(current ? current.parentFolder : null);
+  }
+
+  async function renderPortfolio() {
+    const itemsContainer = document.getElementById('portfolio-items');
+    itemsContainer.innerHTML = 'Loading...';
+    
+    // Back button and upload section visibility
+    const isRoot = !currentFolderId;
+    document.getElementById('portfolio-back-container').style.display = isRoot ? 'none' : 'block';
+    document.getElementById('image-upload-section').style.display = isRoot ? 'none' : 'block';
+    
+    // Breadcrumbs
+    const breadcrumb = document.getElementById('portfolio-breadcrumb');
+    breadcrumb.innerHTML = '<span onclick="navigateToFolder(null)">Root</span>';
+    if(currentFolderId) {
+      let path = [];
+      let current = allFolders.find(f => f._id === currentFolderId);
+      while(current) {
+        path.unshift(current);
+        current = allFolders.find(f => f._id === current.parentFolder);
+      }
+      path.forEach(f => {
+        breadcrumb.innerHTML += ` > <span onclick="navigateToFolder('${f._id}')">${f.name}</span>`;
+      });
+    }
+
+    // Folders
+    const folders = allFolders.filter(f => f.parentFolder === currentFolderId);
+    
+    // Images
+    let images = [];
+    if(!isRoot) {
+      const res = await fetch(`${API_URL}/images/folder/${currentFolderId}`);
+      images = await res.json();
+    }
+
+    itemsContainer.innerHTML = '';
+    
+    folders.forEach(f => {
+      const div = document.createElement('div');
+      div.className = 'folder-item';
+      div.innerHTML = `
+        <div class="item-info" onclick="navigateToFolder('${f._id}')" style="cursor:pointer; flex:1">
+          <span class="icon">📁</span>
+          <span>${f.name}</span>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <label style="cursor:pointer; font-size:0.7rem; color:var(--gold); border:1px solid var(--gold); padding:2px 5px;">
+            Set Cover
+            <input type="file" style="display:none" onchange="uploadCover('${f._id}', this)">
+          </label>
+          <button class="delete-btn" onclick="deleteFolder('${f._id}')">Delete</button>
+        </div>
+      `;
+      itemsContainer.appendChild(div);
+    });
+    
+    images.forEach(img => {
+      itemsContainer.innerHTML += `
+        <div class="image-item">
+          <div class="item-info">
+            <img src="${API_URL}/images/${img._id}" class="image-preview">
+            <span>${img.name}</span>
+          </div>
+          <button class="delete-btn" onclick="deleteImage('${img._id}')">Delete</button>
+        </div>`;
+    });
+    
+    if(folders.length === 0 && images.length === 0) {
+      itemsContainer.innerHTML = '<p>This folder is empty.</p>';
+    }
+  }
+
+  async function createFolder() {
+    const name = document.getElementById('new-folder-name').value;
+    if(!name) return alert('Enter folder name');
+    
+    const res = await fetch(`${API_URL}/folders`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'X-Admin-Auth': 'authenticated'
+      },
+      body: JSON.stringify({ name, parentFolder: currentFolderId })
+    });
+    
+    if(res.ok) {
+      document.getElementById('new-folder-name').value = '';
+      const newFolder = await res.json();
+      allFolders.push(newFolder);
+      renderPortfolio();
+    }
+  }
+
+  async function uploadImage() {
+    if(!currentFolderId) return alert('Please enter a folder first');
+    const fileInput = document.getElementById('img-file');
+    if(fileInput.files.length === 0) return notify('Select an image');
+    
+    const file = fileInput.files[0];
+    if (file.size > 15 * 1024 * 1024) {
+      return notify('File too large. Max limit is 15MB.');
+    }
+    
+    const formData = new FormData();
+    formData.append('image', fileInput.files[0]);
+    formData.append('folderId', currentFolderId);
+    formData.append('name', document.getElementById('img-name').value);
+    
+    document.getElementById('loading').style.display = 'flex';
+    const res = await fetch(`${API_URL}/images`, {
+      method: 'POST',
+      headers: { 'X-Admin-Auth': 'authenticated' },
+      body: formData
+    });
+    document.getElementById('loading').style.display = 'none';
+    
+    if(res.ok) {
+      fileInput.value = '';
+      document.getElementById('img-name').value = '';
+      renderPortfolio();
+    }
+  }
+
+  async function uploadCover(folderId, input) {
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    if (file.size > 15 * 1024 * 1024) {
+      return notify('File too large. Max limit is 15MB.');
+    }
+    const formData = new FormData();
+    formData.append('image', input.files[0]);
+
+    document.getElementById('loading').style.display = 'flex';
+    const res = await fetch(`${API_URL}/folders/${folderId}/cover`, {
+      method: 'PUT',
+      headers: { 'X-Admin-Auth': 'authenticated' },
+      body: formData
+    });
+    document.getElementById('loading').style.display = 'none';
+    if(res.ok) notify('Cover image updated');
+  }
+
+  async function deleteFolder(id) {
+    if(!confirm('Are you sure? This will delete all subfolders and images inside.')) return;
+    const res = await fetch(`${API_URL}/folders/${id}`, {
+      method: 'DELETE',
+      headers: { 'X-Admin-Auth': 'authenticated' }
+    });
+    if(res.ok) {
+      allFolders = allFolders.filter(f => f._id !== id && f.parentFolder !== id);
+      renderPortfolio();
+    }
+  }
+
+  async function deleteImage(id) {
+    if(!confirm('Are you sure?')) return;
+    const res = await fetch(`${API_URL}/images/${id}`, {
+      method: 'DELETE',
+      headers: { 'X-Admin-Auth': 'authenticated' }
+    });
+    if(res.ok) renderPortfolio();
+  }
+
+</script>
+
+</body>
+</html>
