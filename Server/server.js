@@ -237,7 +237,11 @@ app.delete('/api/images/:id', authenticate, async (req, res) => {
 app.use(express.static(path.join(__dirname, '..')));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'webpage.html'));
+  res.sendFile(path.join(__dirname, '..', 'index.html'));
+});
+
+app.get('/webpage', (req, res) => {
+  res.redirect('/');
 });
 
 app.get('/admin', (req, res) => {
