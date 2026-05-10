@@ -197,11 +197,10 @@
           <input type="text" id="new-folder-name" placeholder="Folder Name">
           <button onclick="createFolder()">Create</button>
         </div>
-        <div id="image-upload-section" style="display:none;">
-          <h3>Upload Image</h3>
-          <input type="text" id="img-name" placeholder="Image Name (optional)">
-          <input type="file" id="img-file" accept="image/*">
-          <button onclick="uploadImage()">Upload Image</button>
+          <h3>Upload Images</h3>
+          <input type="text" id="img-name" placeholder="Name for all (optional)">
+          <input type="file" id="img-file" accept="image/*" multiple>
+          <button onclick="uploadImage()">Upload Images</button>
         </div>
       </div>
       
@@ -415,6 +414,7 @@
           <span>${f.name}</span>
         </div>
         <div style="display:flex; gap:10px; align-items:center;">
+          <button class="secondary" onclick="renameFolder('${f._id}', '${f.name.replace(/'/g, "\\'")}')" style="padding: 2px 8px; font-size: 0.7rem;">Rename</button>
           <label style="cursor:pointer; font-size:0.7rem; color:var(--gold); border:1px solid var(--gold); padding:2px 5px;">
             Set Cover
             <input type="file" style="display:none" onchange="uploadCover('${f._id}', this)">
@@ -463,19 +463,22 @@
   }
 
   async function uploadImage() {
-    if(!currentFolderId) return alert('Please enter a folder first');
+    if(!currentFolderId) return notify('Please enter a folder first');
     const fileInput = document.getElementById('img-file');
-    if(fileInput.files.length === 0) return notify('Select an image');
-    
-    const file = fileInput.files[0];
-    if (file.size > 15 * 1024 * 1024) {
-      return notify('File too large. Max limit is 15MB.');
-    }
+    if(fileInput.files.length === 0) return notify('Select image(s)');
     
     const formData = new FormData();
-    formData.append('image', fileInput.files[0]);
     formData.append('folderId', currentFolderId);
-    formData.append('name', document.getElementById('img-name').value);
+    
+    const names = [];
+    for (let file of fileInput.files) {
+      if (file.size > 15 * 1024 * 1024) {
+        return notify(`File ${file.name} too large. Max 15MB.`);
+      }
+      formData.append('images', file);
+      names.push(document.getElementById('img-name').value || file.name);
+    }
+    formData.append('names', JSON.stringify(names));
     
     document.getElementById('loading').style.display = 'flex';
     const res = await fetch(`${API_URL}/images`, {
@@ -486,8 +489,31 @@
     document.getElementById('loading').style.display = 'none';
     
     if(res.ok) {
+      notify('Images uploaded successfully');
       fileInput.value = '';
       document.getElementById('img-name').value = '';
+      renderPortfolio();
+    }
+  }
+
+  async function renameFolder(id, oldName) {
+    const newName = prompt('Enter new folder name:', oldName);
+    if (!newName || newName === oldName) return;
+
+    document.getElementById('loading').style.display = 'flex';
+    const res = await fetch(`${API_URL}/folders/${id}`, {
+      method: 'PUT',
+      headers: { 
+        'Content-Type': 'application/json',
+        'X-Admin-Auth': 'authenticated' 
+      },
+      body: JSON.stringify({ name: newName })
+    });
+    document.getElementById('loading').style.display = 'none';
+    if(res.ok) {
+      notify('Folder renamed');
+      const f = allFolders.find(f => f._id === id);
+      if(f) f.name = newName;
       renderPortfolio();
     }
   }

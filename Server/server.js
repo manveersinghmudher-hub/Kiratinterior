@@ -174,6 +174,12 @@ app.delete('/api/folders/:id', authenticate, async (req, res) => {
   res.send('Folder and contents deleted');
 });
 
+app.put('/api/folders/:id', authenticate, async (req, res) => {
+  const { name } = req.body;
+  const folder = await Folder.findByIdAndUpdate(req.params.id, { name }, { new: true });
+  res.send(folder);
+});
+
 // Portfolio - Images & Covers Setup
 const storage = multer.memoryStorage();
 const upload = multer({ 
@@ -202,18 +208,25 @@ app.get('/api/folders/:id/cover', async (req, res) => {
 });
 
 // Portfolio - Images
-app.post('/api/images', authenticate, upload.single('image'), async (req, res) => {
-  const { name, folderId } = req.body;
-  if (!req.file) return res.status(400).send('No image uploaded');
+app.post('/api/images', authenticate, upload.array('images', 20), async (req, res) => {
+  const { folderId, names } = req.body; // names could be a JSON string if provided
+  if (!req.files || req.files.length === 0) return res.status(400).send('No images uploaded');
 
-  const image = new Image({
-    name: name || req.file.originalname,
-    data: req.file.buffer,
-    contentType: req.file.mimetype,
-    folder: folderId
-  });
-  await image.save();
-  res.send({ _id: image._id, name: image.name });
+  const nameArray = names ? JSON.parse(names) : [];
+  
+  const savedImages = [];
+  for (let i = 0; i < req.files.length; i++) {
+    const file = req.files[i];
+    const image = new Image({
+      name: nameArray[i] || file.originalname,
+      data: file.buffer,
+      contentType: file.mimetype,
+      folder: folderId
+    });
+    await image.save();
+    savedImages.push({ _id: image._id, name: image.name });
+  }
+  res.send(savedImages);
 });
 
 app.get('/api/images/folder/:folderId', async (req, res) => {

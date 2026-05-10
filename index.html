@@ -634,7 +634,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     folders.forEach(f => {
       const coverUrl = f.coverImage ? `${API_URL}/folders/${f._id}/cover` : null;
       pg.innerHTML += `<div class="proj-card" onclick="loadPortfolio('${f._id}')">
-        ${coverUrl ? `<img class="proj-img" src="${coverUrl}" alt="${f.name}" loading="lazy" style="object-fit: contain; background: #000;"/>` : `<div class="proj-bg"><span class="proj-icon">📁</span></div>`}
+        ${coverUrl ? `<img class="proj-img" src="${coverUrl}" alt="${f.name}" loading="lazy" onerror="this.src=this.src" style="object-fit: contain; background: #000;"/>` : `<div class="proj-bg"><span class="proj-icon">📁</span></div>`}
         <div class="proj-info">
           <div class="proj-tag">Folder</div>
           <div class="proj-name">${f.name}</div>
@@ -645,7 +645,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     currentImages = images;
     images.forEach((img, index) => {
       pg.innerHTML += `<div class="proj-card" onclick="openLightbox(${index})">
-        <img class="proj-img" src="${API_URL}/images/${img._id}" alt="${img.name}" loading="lazy"/>
+        <img class="proj-img" src="${API_URL}/images/${img._id}" alt="${img.name}" loading="lazy" onerror="this.src=this.src"/>
         <div class="proj-info">
           <div class="proj-tag">Project</div>
           <div class="proj-name">${img.name}</div>
