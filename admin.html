@@ -96,12 +96,23 @@
       from { transform: translateX(100%); opacity: 0; }
       to { transform: translateX(0); opacity: 1; }
     }
-    .toast.fade-out {
-      animation: toastOut 0.4s ease forwards;
-    }
     @keyframes toastOut {
       from { transform: translateX(0); opacity: 1; }
       to { transform: translateX(100%); opacity: 0; }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      #auth-container, #admin-container { margin: 20px auto; padding: 15px; }
+      .grid-2 { grid-template-columns: 1fr; }
+      .folder-item { 
+        flex-direction: column; 
+        align-items: flex-start; 
+        gap: 15px; 
+      }
+      .folder-item div { width: 100%; justify-content: flex-start; }
+      .tabs { overflow-x: auto; padding-bottom: 5px; }
+      .tab { padding: 8px 12px; font-size: 0.9rem; flex-shrink: 0; }
     }
   </style>
 </head>
