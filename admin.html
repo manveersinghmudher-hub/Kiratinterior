@@ -444,7 +444,10 @@
             <img src="${API_URL}/images/${img._id}" class="image-preview">
             <span>${img.name}</span>
           </div>
+          <div style="display:flex; gap:10px; align-items:center;">
+          <button class="secondary" onclick="renameImage('${img._id}', '${img.name.replace(/'/g, "\\'")}')" style="padding: 2px 8px; font-size: 0.7rem;">Rename</button>
           <button class="delete-btn" onclick="deleteImage('${img._id}')">Delete</button>
+        </div>
         </div>`;
     });
     
@@ -568,6 +571,26 @@
       headers: { 'X-Admin-Auth': 'authenticated' }
     });
     if(res.ok) renderPortfolio();
+  }
+
+  async function renameImage(id, oldName) {
+    const newName = prompt('Enter new image name:', oldName);
+    if (!newName || newName === oldName) return;
+
+    document.getElementById('loading').style.display = 'flex';
+    const res = await fetch(`${API_URL}/images/${id}`, {
+      method: 'PUT',
+      headers: { 
+        'Content-Type': 'application/json',
+        'X-Admin-Auth': 'authenticated' 
+      },
+      body: JSON.stringify({ name: newName })
+    });
+    document.getElementById('loading').style.display = 'none';
+    if(res.ok) {
+      notify('Image renamed');
+      renderPortfolio();
+    }
   }
 
 </script>

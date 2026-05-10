@@ -246,6 +246,12 @@ app.delete('/api/images/:id', authenticate, async (req, res) => {
   res.send('Image deleted');
 });
 
+app.put('/api/images/:id', authenticate, async (req, res) => {
+  const { name } = req.body;
+  const image = await Image.findByIdAndUpdate(req.params.id, { name }, { new: true });
+  res.send(image);
+});
+
 // Serving main page and admin page
 app.use(express.static(path.join(__dirname, '..')));
 
