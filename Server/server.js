@@ -12,6 +12,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+const MONGODB_URI = process.env.MONGODB_URI;
+
 // Request Logger
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
@@ -19,8 +21,8 @@ app.use((req, res, next) => {
 });
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
+mongoose.connect(MONGODB_URI)
+  .then(() => console.log('Connected to MongoDB Atlas'))
   .catch(err => console.error('Could not connect to MongoDB', err));
 
 // --- Schemas ---
@@ -80,21 +82,6 @@ const authenticate = (req, res, next) => {
 // --- Routes ---
 
 // Auth
-app.post('/api/auth/signup', async (req, res) => {
-  try {
-    const { username, password } = req.body;
-    const existingUser = await User.findOne({ username });
-    if (existingUser) return res.status(400).send('User already exists');
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ username, password: hashedPassword });
-    await user.save();
-    res.send('User created');
-  } catch (err) {
-    res.status(500).send(err.message);
-  }
-});
-
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -112,6 +99,15 @@ app.post('/api/auth/login', async (req, res) => {
 
 // Site Content
 app.get('/api/content', async (req, res) => {
+  // Ensure Admin User Exists
+  const adminExists = await User.findOne({ username: 'kirat_interior' });
+  if (!adminExists) {
+    const hashedPassword = await bcrypt.hash('Kirat@2026', 10);
+    const admin = new User({ username: 'kirat_interior', password: hashedPassword });
+    await admin.save();
+    console.log('Admin user created: kirat_interior');
+  }
+
   let content = await SiteContent.findOne();
   if (!content) {
     // Initial data if DB is empty
@@ -239,6 +235,10 @@ app.delete('/api/images/:id', authenticate, async (req, res) => {
 
 // Serving main page and admin page
 app.use(express.static(path.join(__dirname, '..')));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'webpage.html'));
+});
 
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'admin.html'));

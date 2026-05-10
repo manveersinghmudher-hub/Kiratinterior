@@ -117,15 +117,6 @@
     <input type="text" id="login-user" placeholder="Username">
     <input type="password" id="login-pass" placeholder="Password">
     <button onclick="login()">Login</button>
-    <p style="margin-top:20px">Don't have an account? <a href="#" onclick="toggleAuth(false)" style="color:var(--gold)">Sign Up</a></p>
-  </div>
-  
-  <div class="card" id="signup-form" style="display:none">
-    <h2>Sign Up</h2>
-    <input type="text" id="signup-user" placeholder="Username">
-    <input type="password" id="signup-pass" placeholder="Password">
-    <button onclick="signup()">Sign Up</button>
-    <p style="margin-top:20px">Already have an account? <a href="#" onclick="toggleAuth(true)" style="color:var(--gold)">Login</a></p>
   </div>
 </div>
 
@@ -238,11 +229,6 @@
     }
   };
 
-  function toggleAuth(isLogin) {
-    document.getElementById('login-form').style.display = isLogin ? 'block' : 'none';
-    document.getElementById('signup-form').style.display = isLogin ? 'none' : 'block';
-  }
-
   // NOTIFICATIONS
   function notify(msg) {
     const container = document.getElementById('toast-container');
@@ -256,20 +242,6 @@
     }, 3000);
   }
 
-  async function signup() {
-    const username = document.getElementById('signup-user').value;
-    const password = document.getElementById('signup-pass').value;
-    const res = await fetch(`${API_URL}/auth/signup`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
-    });
-    if (res.ok) {
-      notify('Sign up successful! Please login.');
-      toggleAuth(true);
-    } else {
-      alert(await res.text());
-    }
   }
 
   async function login() {
