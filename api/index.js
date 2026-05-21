@@ -216,6 +216,7 @@ app.get('/api/folders/:id/cover', async (req, res) => {
     return res.status(404).send('No cover image');
   }
   res.set('Content-Type', folder.coverImage.contentType);
+  res.set('Cache-Control', 'public, max-age=86400'); // Cache cover images for 24 hours
   res.send(folder.coverImage.data);
 });
 
@@ -250,6 +251,7 @@ app.get('/api/images/:id', async (req, res) => {
   const image = await Image.findById(req.params.id);
   if (!image) return res.status(404).send('Image not found');
   res.set('Content-Type', image.contentType);
+  res.set('Cache-Control', 'public, max-age=31536000, immutable'); // Cache portfolio images aggressively for 1 year (immutable)
   res.send(image.data);
 });
 
