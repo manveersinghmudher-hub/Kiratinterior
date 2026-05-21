@@ -14,9 +14,14 @@ app.use(cors());
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
-// Request Logger
+// Request Logger and Path Normalizer for Vercel Serverless
 app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
+  console.log(`Original URL: ${req.method} ${req.url}`);
+  const staticRoutes = ['/', '/admin', '/webpage'];
+  if (!req.url.startsWith('/api') && !staticRoutes.includes(req.url) && !req.url.startsWith('/admin.')) {
+    req.url = '/api' + req.url;
+    console.log(`Normalized URL: ${req.method} ${req.url}`);
+  }
   next();
 });
 
