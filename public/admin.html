@@ -487,8 +487,8 @@
     
     const names = [];
     for (let file of fileInput.files) {
-      if (file.size > 15 * 1024 * 1024) {
-        return notify(`File ${file.name} too large. Max 15MB.`);
+      if (file.size > 4 * 1024 * 1024) {
+        return notify(`File ${file.name} too large. Max 4MB (Vercel Limit).`);
       }
       formData.append('images', file);
       names.push(document.getElementById('img-name').value || file.name);
@@ -536,8 +536,8 @@
   async function uploadCover(folderId, input) {
     if (!input.files || !input.files[0]) return;
     const file = input.files[0];
-    if (file.size > 15 * 1024 * 1024) {
-      return notify('File too large. Max limit is 15MB.');
+    if (file.size > 4 * 1024 * 1024) {
+      return notify('File too large. Max limit is 4MB (Vercel Limit).');
     }
     const formData = new FormData();
     formData.append('image', input.files[0]);

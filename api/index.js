@@ -20,10 +20,20 @@ app.use((req, res, next) => {
   next();
 });
 
-// MongoDB Connection
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB Atlas'))
-  .catch(err => console.error('Could not connect to MongoDB', err));
+// MongoDB Connection Middleware (optimized for Serverless)
+app.use(async (req, res, next) => {
+  if (mongoose.connection.readyState >= 1) {
+    return next();
+  }
+  try {
+    await mongoose.connect(MONGODB_URI);
+    console.log('Connected to MongoDB Atlas');
+    next();
+  } catch (err) {
+    console.error('Could not connect to MongoDB', err);
+    res.status(500).send('Database connection error');
+  }
+});
 
 // --- Schemas ---
 
@@ -32,7 +42,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true }
 });
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 
 const siteContentSchema = new mongoose.Schema({
   name: String,
@@ -46,7 +56,7 @@ const siteContentSchema = new mongoose.Schema({
   stats: [{ num: String, label: String }]
 });
 
-const SiteContent = mongoose.model('SiteContent', siteContentSchema);
+const SiteContent = mongoose.models.SiteContent || mongoose.model('SiteContent', siteContentSchema);
 
 const folderSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -54,7 +64,7 @@ const folderSchema = new mongoose.Schema({
   coverImage: { data: Buffer, contentType: String }
 });
 
-const Folder = mongoose.model('Folder', folderSchema);
+const Folder = mongoose.models.Folder || mongoose.model('Folder', folderSchema);
 
 const imageSchema = new mongoose.Schema({
   name: String,
@@ -63,14 +73,11 @@ const imageSchema = new mongoose.Schema({
   folder: { type: mongoose.Schema.Types.ObjectId, ref: 'Folder', required: true }
 });
 
-const Image = mongoose.model('Image', imageSchema);
-
-// --- Middleware ---
+const Image = mongoose.models.Image || mongoose.model('Image', imageSchema);
 
 // --- Middleware ---
 
 const authenticate = (req, res, next) => {
-  // Simplified auth: check for a simple header or just allow for now as requested
   const authHeader = req.header('X-Admin-Auth');
   if (authHeader === 'authenticated') {
     next();
@@ -184,7 +191,7 @@ app.put('/api/folders/:id', authenticate, async (req, res) => {
 const storage = multer.memoryStorage();
 const upload = multer({ 
   storage: storage,
-  limits: { fileSize: 15 * 1024 * 1024 } // 15MB
+  limits: { fileSize: 15 * 1024 * 1024 } // 15MB max (Warning: Vercel functions have 4.5MB payload limit)
 });
 
 app.put('/api/folders/:id/cover', authenticate, upload.single('image'), async (req, res) => {
@@ -209,7 +216,7 @@ app.get('/api/folders/:id/cover', async (req, res) => {
 
 // Portfolio - Images
 app.post('/api/images', authenticate, upload.array('images', 20), async (req, res) => {
-  const { folderId, names } = req.body; // names could be a JSON string if provided
+  const { folderId, names } = req.body;
   if (!req.files || req.files.length === 0) return res.status(400).send('No images uploaded');
 
   const nameArray = names ? JSON.parse(names) : [];
@@ -252,32 +259,33 @@ app.put('/api/images/:id', authenticate, async (req, res) => {
   res.send(image);
 });
 
-// Serving main page and admin page
-app.use(express.static(path.join(__dirname, '..')));
+// Serving static files locally (Fallback)
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'index.html'));
-});
-
-app.get('/webpage', (req, res) => {
-  res.redirect('/');
+  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
 
 app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'admin.html'));
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  res.sendFile(path.join(__dirname, '..', 'public', 'admin.html'));
 });
 
 // Error handler for Multer
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
     if (err.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).send('File too large. Max limit is 15MB.');
+      return res.status(400).send('File too large. Max limit is 15MB (Warning: Vercel limit is 4.5MB).');
     }
   }
   res.status(500).send(err.message);
 });
+
+// Standalone Server runner (Local testing)
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Server running locally on port ${PORT}`);
+  });
+}
+
+module.exports = app;
