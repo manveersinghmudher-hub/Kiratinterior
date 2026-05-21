@@ -251,7 +251,7 @@ app.get('/api/images/:id', async (req, res) => {
   const image = await Image.findById(req.params.id);
   if (!image) return res.status(404).send('Image not found');
   res.set('Content-Type', image.contentType);
-  res.set('Cache-Control', 'public, max-age=2592000, immutable'); // Cache portfolio images for 30 days (immutable)
+  res.set('Cache-Control', 'public, max-age=31536000, immutable'); // Cache portfolio images aggressively for 1 year (immutable)
   res.send(image.data);
 });
 
